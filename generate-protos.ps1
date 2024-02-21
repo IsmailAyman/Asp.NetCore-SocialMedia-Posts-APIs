@@ -1,0 +1,3 @@
+buf generate -o "src\SocialMedia.Application.Contracts" --template ".\src\SocialMedia.Application.Contracts\buf.gen.yaml" "buf.build/bdaya-dev/social-media-training"
+buf generate -o "src\SocialMedia.HttpApi" --template ".\src\SocialMedia.HttpApi\buf.gen.yaml" "buf.build/bdaya-dev/social-media-training"
+buf generate -o "src\SocialMedia.HttpApi.Client" --template ".\src\SocialMedia.HttpApi.Client\buf.gen.yaml" "buf.build/bdaya-dev/social-media-training"

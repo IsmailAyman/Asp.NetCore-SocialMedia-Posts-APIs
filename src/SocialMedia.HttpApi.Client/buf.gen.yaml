@@ -1,0 +1,7 @@
+﻿version: v1
+managed:
+  enabled: false
+plugins:
+  - plugin: buf.build/grpc/csharp
+    out: gen
+    opt: "no_server"

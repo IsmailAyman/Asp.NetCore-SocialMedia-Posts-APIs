@@ -1,0 +1,6 @@
+﻿version: v1
+managed:
+  enabled: false
+plugins:
+  - plugin: buf.build/protocolbuffers/csharp
+    out: gen

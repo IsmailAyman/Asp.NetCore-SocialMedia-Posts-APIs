@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <RootNamespace>SocialMedia</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SocialMedia.Domain.Shared\SocialMedia.Domain.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Api.CommonProtos" Version="2.14.0" />
+    <PackageReference Include="Google.Api.Gax.Grpc" Version="4.5.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.25.2" />
+    <PackageReference Include="Volo.Abp.ObjectExtending" Version="8.0.2" />
+    <PackageReference Include="Volo.Abp.Account.Application.Contracts" Version="8.0.2" />
+    <PackageReference Include="Volo.Abp.Identity.Application.Contracts" Version="8.0.2" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Application.Contracts" Version="8.0.2" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application.Contracts" Version="8.0.2" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.Application.Contracts" Version="8.0.2" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application.Contracts" Version="8.0.2" />
+  </ItemGroup>
+
+</Project>
