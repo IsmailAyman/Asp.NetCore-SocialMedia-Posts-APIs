@@ -11,7 +11,8 @@ public class SocialMediaMongoDbFixture : IDisposable
     {
         MongoDbRunner = MongoRunner.Run(new MongoRunnerOptions
         {
-            UseSingleNodeReplicaSet = true
+            UseSingleNodeReplicaSet = true,
+            ReplicaSetSetupTimeout = TimeSpan.FromSeconds(120)
         });
     }
 

@@ -13,11 +13,11 @@ namespace SocialMedia.SocialMedia
             Comments = comments;
             Shares = shares;
         }
-        public UInt64 Likes { get; set; }
+        public ulong Likes { get; set; }
 
-        public UInt64 Comments { get; set; }
+        public ulong Comments { get; set; } 
 
-        public UInt64 Shares { get; set; }
+        public ulong Shares { get; set; } 
 
     }
 }

@@ -6,6 +6,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.Guids;
 
 namespace SocialMedia.SocialMedia
 {
@@ -16,22 +17,20 @@ namespace SocialMedia.SocialMedia
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 
-        public PostSM(Guid id, UserInfoSM userInfo, string content, List<AppImageSM>? images, PostReviewSM? review, PostStatsSM? stats) : base(id)
+        public PostSM(Guid id, string content, List<AppImageSM>? images) : base(id)
         {
-            User = userInfo;
+           
             Date = DateTime.Now;
             Content = content;        
             if (images != null) { Images = images; }
-            if (review != null ) { Review = review; }
-            if (stats != null) { Stats = stats; }
-             
+            Review = null;
+            Stats = new PostStatsSM(Guid.NewGuid(),0,0, 0);
         }
-        public UserInfoSM User { get; set; }
-
+      
         public DateTime Date { get; set; }
 
         public string Content { get; set; }
-        public PostStatsSM? Stats { get; set; }
+        public PostStatsSM Stats { get; set; }
 
         public PostReviewSM? Review { get; set; }
 

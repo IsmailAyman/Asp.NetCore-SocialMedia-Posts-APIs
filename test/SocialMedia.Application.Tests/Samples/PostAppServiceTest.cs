@@ -1,4 +1,5 @@
 ﻿using Bdaya.SocialTraining.V1;
+using Google.Api;
 using NSubstitute.ReturnsExtensions;
 using Shouldly;
 using SocialMedia.SocialMedia;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp.Identity;
 using Volo.Abp.Modularity;
 using Xunit;
 
@@ -17,24 +19,33 @@ namespace SocialMedia.Samples
       where TStartupModule : IAbpModule
     {
         private IPostService AppService { get; }
+
+        private readonly IIdentityUserAppService _userAppService;
         public PostAppServiceTest()
         {
             AppService = GetRequiredService<IPostService>();
+            _userAppService = GetRequiredService<IIdentityUserAppService>();
         }
 
         [Fact]
 
         public async Task EnsureCreatePostAndGetPostReturnSameResult()
         {
+            var allUsers = await _userAppService.GetListAsync(new());
+            var targetUser = allUsers.Items[0];
+            using var userDisposable = LoginUser(targetUser.Id);
 
             var createPostResponse = await AppService.CreatePost(new CreatePostRequest() { });
-
             var theCreatedpost = createPostResponse.Result;
 
             theCreatedpost.Content.ShouldBe("Content");
-            theCreatedpost.User.Name.ShouldBe("Ismail");
+            theCreatedpost.User.Name.ShouldBe("admin");
             theCreatedpost.Images.ShouldContain(I => I.Name == "Image1");
             theCreatedpost.Images.Count.ShouldBe(2);
+            theCreatedpost.User.ShouldNotBeNull();
+            theCreatedpost.User.Id.ShouldNotBeNull();
+            theCreatedpost.User.Name.ShouldNotBeNull();
+
 
             var getPost = await AppService.GetPost(new()
             {
@@ -44,19 +55,22 @@ namespace SocialMedia.Samples
             var theReturnedPost = getPost.Result;
             theReturnedPost.Id.ShouldBe(theCreatedpost.Id);
             theReturnedPost.Content.ShouldBe(theCreatedpost.Content);
-            theReturnedPost.User.ImageUrl.ShouldBe("Image");
+          
 
         }
 
         [Fact]
         public async Task EnsureUpdatePostReturnPost_WithTheUpdatedValues()
         {
+            var allUsers = await _userAppService.GetListAsync(new());
+            var targetUser = allUsers.Items[0];
+            using var userDisposable = LoginUser(targetUser.Id);
 
             var createPostResponse = await AppService.CreatePost(new CreatePostRequest() { });
             var theCreatedpost = createPostResponse.Result;
 
             theCreatedpost.Content.ShouldBe("Content");
-            theCreatedpost.User.Name.ShouldBe("Ismail");
+            theCreatedpost.User.Name.ShouldBe("admin");
             theCreatedpost.Images.ShouldContain(I => I.Name == "Image1");
             theCreatedpost.Images.Count.ShouldBe(2);
 
@@ -71,6 +85,9 @@ namespace SocialMedia.Samples
         [Fact]
         public async Task EnsureDeletePostWillDeleteIt()
         {
+            var allUsers = await _userAppService.GetListAsync(new());
+            var targetUser = allUsers.Items[0];
+            using var userDisposable = LoginUser(targetUser.Id);
 
             var response = await AppService.CreatePost(new CreatePostRequest() { });
             var theCreatedpost = response.Result;
@@ -100,22 +117,30 @@ namespace SocialMedia.Samples
         [Fact]
         public async Task EnsureListPostsReturnsListOfPaginated_SortedAndFilteredPosts()
         {
+            var allUsers = await _userAppService.GetListAsync(new());
+            var targetUser = allUsers.Items[0];
+            using var userDisposable = LoginUser(targetUser.Id);
 
             List<Post> returnedPosts = new List<Post>();
             List<string> userIds = new List<string>();
             for (int i = 0; i < 10; i++)
             {
-              var response = await AppService.CreatePost(new CreatePostRequest() { });
+                var response = await AppService.CreatePost(new CreatePostRequest() { });
                 returnedPosts.Add(response.Result);
                 userIds.Add(response.Result.User.Id);
+
+                response.Result.User.ShouldNotBeNull();
+                response.Result.User.Id.ShouldBe(targetUser.Id.ToString());
+                response.Result.User.Name.ShouldBe(targetUser.Name);
             }
 
             returnedPosts.Count.ShouldBe(10);
 
+
             var postsListResponse = await AppService.ListPosts(new ListPostsRequest()
             {
-                Pagination = new InfiniteScrollPaginationInfo { PageSize = 5,PageToken = 1.ToString()},
-                Filter = new ListPostsFilter { UserIds ={ userIds }},
+                Pagination = new InfiniteScrollPaginationInfo { PageSize = 5, PageToken = "1" },
+                Filter = new ListPostsFilter { UserIds = { userIds } },
                 Sort = new ListPostsSorting
                 {
                     CreationTime = Bdaya.SocialTraining.V1.SortDirection.Ascending
